@@ -2,12 +2,12 @@ extern crate byteorder;
 use byteorder::{BigEndian, ReadBytesExt};
 
 pub struct ChunkList {
-    chunks: Vec<Chunk>,
+    pub chunks: Vec<Chunk>,
 }
 
 pub struct Chunk {
-    start: u32,
-    length: u32,
+    pub start: u32,
+    pub length: u32,
 }
 
 impl Chunk {
