@@ -11,7 +11,7 @@ pub struct Chunk {
 }
 
 impl Chunk {
-    fn parse(mut data : &[u8]) -> Chunk {
+    pub fn parse(mut data : &[u8]) -> Chunk {
         return Chunk {
             start: data.read_u32::<BigEndian>().unwrap(),
             length: data.read_u32::<BigEndian>().unwrap(),
@@ -20,7 +20,7 @@ impl Chunk {
 }
 
 impl ChunkList {
-    fn parse(data : &[u8]) -> ChunkList {
+    pub fn parse(data : &[u8]) -> ChunkList {
         let chunks = data
             .chunks(16)
             .filter(|chunk| chunk[0] != 255)
