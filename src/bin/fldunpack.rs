@@ -54,6 +54,10 @@ fn main() {
                               .help("The file to unpack")
                               .required(true)
                               .index(1))
+                          .arg(Arg::with_name("output_dir")
+                              .help("Directory to unpack to")
+                              .required(false)
+                              .index(2))
                           .arg(Arg::with_name("extension")
                               .help("File extension of extracted files (default: .chunk)")
                               .long("extension")
@@ -61,6 +65,13 @@ fn main() {
                           .get_matches();
     let input = matches.value_of("input").unwrap().to_string();
     let input_path = Path::new(&input);
+
+    let output_dir;
+    match matches.value_of("output_dir") {
+        Some(dir) => output_dir = String::from(dir),
+        None => output_dir = String::from(input_path.parent().unwrap().to_string_lossy()),
+    }
+    let output_path = Path::new(&output_dir);
 
     let extension = matches.value_of("extension").unwrap_or("chunk").to_string();
 
@@ -85,13 +96,11 @@ fn main() {
         }
     }
 
-    let output_dir = input_path.parent().unwrap();
-
     let chunk_list = ChunkList::parse(&data);
     for (i, chunk) in chunk_list.into_iter().enumerate() {
         let output_name = get_output_name(input_path, i, &extension);
         let output_name_path = Path::new(&output_name);
-        let output = output_dir.join(output_name_path);
+        let output = output_path.join(output_name_path);
         let mut output_file = File::create(&output).unwrap();
 
         println!("Writing chunk {} to {}", i, output_name);
