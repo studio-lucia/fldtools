@@ -1,6 +1,9 @@
 extern crate byteorder;
 use byteorder::{BigEndian, ReadBytesExt};
 
+// Size of a Mode-1 CD-ROM sector, in bytes
+pub const SECTOR_LENGTH : usize = 2048;
+
 pub struct ChunkList {
     pub chunks: Vec<Chunk>,
 }

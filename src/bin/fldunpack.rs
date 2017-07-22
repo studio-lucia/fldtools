@@ -6,13 +6,10 @@ use std::path::Path;
 use std::process::exit;
 
 extern crate fldtools;
-use fldtools::{Chunk, ChunkList};
+use fldtools::{Chunk, ChunkList, SECTOR_LENGTH};
 
 extern crate clap;
 use clap::{Arg, App};
-
-// Size of a Mode-1 CD-ROM sector, in bytes
-const SECTOR_LENGTH : usize = 2048;
 
 fn get_output_name(file : &Path, index : usize, extension : &str) -> String {
     return format!("{}.{}.{}", 
