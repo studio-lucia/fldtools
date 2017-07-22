@@ -32,3 +32,12 @@ impl ChunkList {
         }
     }
 }
+
+impl IntoIterator for ChunkList {
+    type Item = Chunk;
+    type IntoIter = ::std::vec::IntoIter<Chunk>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        return self.chunks.into_iter();
+    }
+}
