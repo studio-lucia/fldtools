@@ -22,7 +22,7 @@ impl Chunk {
 impl ChunkList {
     pub fn parse(data : &[u8]) -> ChunkList {
         let chunks = data
-            .chunks(16)
+            .chunks(8)
             .filter(|chunk| chunk[0] != 255)
             .map(|chunk| Chunk::parse(chunk))
             .collect();
