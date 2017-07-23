@@ -1,6 +1,8 @@
 # fldtools
 
-This tool supports unpacking and authoring FLD data files from the game [*Magical School Lunar!*](https://en.wikipedia.org/wiki/Lunar:_Samposuru_Gakuen) (Sega Saturn, 1997).
+This set of tools supports unpacking and authoring FLD data files from the game [*Magical School Lunar!*](https://en.wikipedia.org/wiki/Lunar:_Samposuru_Gakuen) (Sega Saturn, 1997).
+
+Aside from the commandline tool, this project also contains a Rust crate with a few helpers to let you write your own tools for working with FLD files.
 
 ## Installation
 
