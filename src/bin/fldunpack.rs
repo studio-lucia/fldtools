@@ -56,7 +56,7 @@ fn main() {
                               .required(false)
                               .index(2))
                           .arg(Arg::with_name("extension")
-                              .help("File extension of extracted files (default: .chunk)")
+                              .help("File extension of extracted files (default: chunk)")
                               .long("extension")
                               .takes_value(true))
                           .get_matches();
