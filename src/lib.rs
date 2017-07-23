@@ -38,11 +38,11 @@ impl Chunk {
     /// Parses a chunk from raw data.
     /// `data` should be an 8-byte slice containing two 32-bit big endian
     /// integers, as read directly out of an FLD header.
-    pub fn parse(mut data : &[u8]) -> Chunk {
-        return Chunk {
-            start: data.read_u32::<BigEndian>().unwrap(),
-            length: data.read_u32::<BigEndian>().unwrap(),
-        }
+    pub fn parse(mut data : &[u8]) -> io::Result<Chunk> {
+        return Ok(Chunk {
+            start: data.read_u32::<BigEndian>()?,
+            length: data.read_u32::<BigEndian>()?,
+        });
     }
 
     /// Serializes this Chunk into its binary representation.
@@ -89,16 +89,16 @@ impl ChunkList {
     /// Parses an FLD header from raw data, and returns a ChunkList.
     /// This skips any portion of the header which begins with `0xFF`,
     /// since FLD files are padded using sets of `0xFF`s.
-    pub fn parse(data : &[u8]) -> ChunkList {
-        let chunks = data
+    pub fn parse(data : &[u8]) -> io::Result<ChunkList> {
+        let chunks : Vec<Chunk> = data
             .chunks(8)
             .filter(|chunk| chunk[0] != 255)
             .map(|chunk| Chunk::parse(chunk))
-            .collect();
+            .collect::<io::Result<Vec<Chunk>>>()?;
 
-        return ChunkList {
+        return Ok(ChunkList {
             chunks: chunks,
-        }
+        });
     }
 
     /// Serializes this ChunkList into its binary representation.

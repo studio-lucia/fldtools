@@ -93,7 +93,7 @@ fn main() {
         }
     }
 
-    let chunk_list = ChunkList::parse(&data);
+    let chunk_list = ChunkList::parse(&data).unwrap();
     for (i, chunk) in chunk_list.into_iter().enumerate() {
         let output_name = get_output_name(input_path, i, &extension);
         let output_name_path = Path::new(&output_name);
