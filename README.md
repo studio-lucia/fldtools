@@ -6,13 +6,17 @@ This tool supports unpacking and authoring FLD data files from the game [*Magica
 
 On Mac:
 
-> brew install mistydemeo/lunar/fldtools
+```
+brew install mistydemeo/lunar/fldtools
+```
 
 Building manually:
 
 Clone this repo, and then
 
-> make
+```
+make
+```
 
 ## Usage
 
