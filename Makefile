@@ -3,7 +3,7 @@ INSTALL := install
 PREFIX := /usr/local
 BINDIR := $(PREFIX)/bin
 
-.PHONY: all fldpack fldunpack clean install
+.PHONY: all clean install
 
 all:
 	cargo build --release
