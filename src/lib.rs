@@ -1,3 +1,12 @@
+//! Tools to read and write FLD files, as used by [*Magical School Lunar!* (1997)](https://en.wikipedia.org/wiki/Lunar:_Samposuru_Gakuen)
+//! for the Sega Saturn.
+//! FLD files are concatenated chunks of arbitrary data; the game uses them
+//! to bundle together sets of related files. These chunks are essentialy
+//! unnamed files, and an FLD file can be treated as a flat filesystem.
+//!
+//! More information on the FLD data format can be found in
+//! this set of [Magical School Lunar! notes](https://github.com/mistydemeo/magicaldata/blob/master/files/SXX.FLD.md).
+
 use std::io;
 
 extern crate byteorder;
@@ -6,19 +15,29 @@ use byteorder::{BigEndian, ReadBytesExt, WriteBytesExt};
 extern crate itertools;
 use itertools::Itertools;
 
-// Size of a Mode-1 CD-ROM sector, in bytes
+/// The size of a Mode-1 CD-ROM sector, in bytes.
+/// Because the components of FLD files are padded out to even sector boundaries,
+/// this is useful to calculate offsets.
 pub const SECTOR_LENGTH : usize = 2048;
 
+/// Represents the header of an FLD file.
+/// A ChunkList is a simple collection of one or more data chunks.
 pub struct ChunkList {
     pub chunks: Vec<Chunk>,
 }
 
+/// Represents a single data chunk within an FLD file.
 pub struct Chunk {
+    /// The offset of this chunk from the beginning of the file.
     pub start: u32,
+    /// The length of this chunk; this is the original, unpadded size.
     pub length: u32,
 }
 
 impl Chunk {
+    /// Parses a chunk from raw data.
+    /// `data` should be an 8-byte slice containing two 32-bit big endian
+    /// integers, as read directly out of an FLD header.
     pub fn parse(mut data : &[u8]) -> Chunk {
         return Chunk {
             start: data.read_u32::<BigEndian>().unwrap(),
@@ -26,6 +45,7 @@ impl Chunk {
         }
     }
 
+    /// Serializes this Chunk into its binary representation.
     pub fn serialize(&self) -> io::Result<Vec<u8>> {
         let mut writer = vec![];
         writer.write_u32::<BigEndian>(self.start)?;
@@ -41,6 +61,9 @@ fn fold_vecs<T>(mut a : Vec<T>, b : Vec<T>) -> Vec<T> {
 }
 
 impl ChunkList {
+    /// Builds a ChunkList given a list of file sizes.
+    /// This will calculate offsets for each file to be packed
+    /// within an FLD file and use that to generate a set of Chunks.
     pub fn build(files : &[usize]) -> ChunkList {
         // We start at the beginning of a sector because
         // the header is padded to 2048 bytes.
@@ -63,6 +86,9 @@ impl ChunkList {
         };
     }
 
+    /// Parses an FLD header from raw data, and returns a ChunkList.
+    /// This skips any portion of the header which begins with `0xFF`,
+    /// since FLD files are padded using sets of `0xFF`s.
     pub fn parse(data : &[u8]) -> ChunkList {
         let chunks = data
             .chunks(8)
@@ -75,6 +101,7 @@ impl ChunkList {
         }
     }
 
+    /// Serializes this ChunkList into its binary representation.
     pub fn serialize(&self) -> io::Result<Vec<u8>> {
         let mut serialized = self
             .chunks
