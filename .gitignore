@@ -1,2 +1,7 @@
 target/
 **/*.rs.bk
+
+# Ignore test files
+*.fld
+*.FLD
+*.chunk
