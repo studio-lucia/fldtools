@@ -1,6 +1,6 @@
 [package]
 name = "fldtools"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Misty De Meo <mistydemeo@gmail.com>"]
 description = "Library to pack and unpack FLD files for use with Magical School Lunar! (1997)"
 homepage = "https://github.com/mistydemeo/fldtools"

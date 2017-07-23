@@ -44,7 +44,7 @@ fn write_chunk(mut reader : &mut BufReader<&mut File>, mut target : &File, chunk
 
 fn main() {
     let matches = App::new("fldunpack")
-                          .version("0.1.0")
+                          .version("0.1.1")
                           .author("Misty De Meo")
                           .about("Unpack Magical School Lunar! FLD files")
                           .arg(Arg::with_name("input")

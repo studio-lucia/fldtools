@@ -40,7 +40,7 @@ fn write_file(filename : &String, writer : &mut BufWriter<File>) -> ::std::io::R
 
 fn main() {
     let matches = App::new("fldpack")
-                          .version("0.1.0")
+                          .version("0.1.1")
                           .author("Misty De Meo")
                           .about("Pack Magical School Lunar! FLD files")
                           .arg(Arg::with_name("target")
