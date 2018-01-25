@@ -9,7 +9,7 @@ Aside from the commandline tool, this project also contains a Rust crate with a 
 On Mac:
 
 ```
-brew install mistydemeo/lunar/fldtools
+brew install studio-lucia/lunar/fldtools
 ```
 
 Building manually:
