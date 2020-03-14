@@ -5,10 +5,8 @@ use std::io::SeekFrom;
 use std::path::Path;
 use std::process::exit;
 
-extern crate fldtools;
 use fldtools::{Chunk, ChunkList, SECTOR_LENGTH};
 
-extern crate clap;
 use clap::{Arg, App};
 
 fn get_output_name(file : &Path, index : usize, extension : &str) -> String {
@@ -21,7 +19,7 @@ fn get_output_name(file : &Path, index : usize, extension : &str) -> String {
 // Given an input file and a file to write to, reads `chunk_data.length` of
 // data from the input beginning at `chunk_data.start`.
 // Data is read/written in 2048-byte chunks.
-fn write_chunk(mut reader : &mut BufReader<&mut File>, mut target : &File, chunk_data : &Chunk) -> ::std::io::Result<u32> {
+fn write_chunk(reader : &mut BufReader<&mut File>, mut target : &File, chunk_data : &Chunk) -> ::std::io::Result<u32> {
     reader.seek(SeekFrom::Start(chunk_data.start as u64))?;
     let mut bytes_to_read = chunk_data.length as usize;
 
