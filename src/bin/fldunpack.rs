@@ -1,25 +1,31 @@
 use std::fs::File;
-use std::io::BufReader;
 use std::io::prelude::*;
+use std::io::BufReader;
 use std::io::SeekFrom;
 use std::path::Path;
 use std::process::exit;
 
 use fldtools::{Chunk, ChunkList, SECTOR_LENGTH};
 
-use clap::{Arg, App};
+use clap::{App, Arg};
 
-fn get_output_name(file : &Path, index : usize, extension : &str) -> String {
-    return format!("{}.{}.{}", 
+fn get_output_name(file: &Path, index: usize, extension: &str) -> String {
+    return format!(
+        "{}.{}.{}",
         file.file_stem().unwrap().to_str().unwrap(),
         index,
-        extension);
+        extension
+    );
 }
 
 // Given an input file and a file to write to, reads `chunk_data.length` of
 // data from the input beginning at `chunk_data.start`.
 // Data is read/written in 2048-byte chunks.
-fn write_chunk(reader : &mut BufReader<&mut File>, mut target : &File, chunk_data : &Chunk) -> ::std::io::Result<u32> {
+fn write_chunk(
+    reader: &mut BufReader<&mut File>,
+    mut target: &File,
+    chunk_data: &Chunk,
+) -> ::std::io::Result<u32> {
     reader.seek(SeekFrom::Start(chunk_data.start as u64))?;
     let mut bytes_to_read = chunk_data.length as usize;
 
@@ -31,7 +37,7 @@ fn write_chunk(reader : &mut BufReader<&mut File>, mut target : &File, chunk_dat
             buf_size = bytes_to_read as usize;
         }
 
-        let mut buf : Vec<u8> = vec![0; buf_size];
+        let mut buf: Vec<u8> = vec![0; buf_size];
         reader.read_exact(&mut buf)?;
         target.write(&buf)?;
         bytes_to_read -= buf_size;
@@ -42,22 +48,28 @@ fn write_chunk(reader : &mut BufReader<&mut File>, mut target : &File, chunk_dat
 
 fn main() {
     let matches = App::new("fldunpack")
-                          .version("0.1.1")
-                          .author("Misty De Meo")
-                          .about("Unpack Magical School Lunar! FLD files")
-                          .arg(Arg::with_name("input")
-                              .help("The file to unpack")
-                              .required(true)
-                              .index(1))
-                          .arg(Arg::with_name("output_dir")
-                              .help("Directory to unpack to")
-                              .required(false)
-                              .index(2))
-                          .arg(Arg::with_name("extension")
-                              .help("File extension of extracted files (default: chunk)")
-                              .long("extension")
-                              .takes_value(true))
-                          .get_matches();
+        .version("0.1.1")
+        .author("Misty De Meo")
+        .about("Unpack Magical School Lunar! FLD files")
+        .arg(
+            Arg::with_name("input")
+                .help("The file to unpack")
+                .required(true)
+                .index(1),
+        )
+        .arg(
+            Arg::with_name("output_dir")
+                .help("Directory to unpack to")
+                .required(false)
+                .index(2),
+        )
+        .arg(
+            Arg::with_name("extension")
+                .help("File extension of extracted files (default: chunk)")
+                .long("extension")
+                .takes_value(true),
+        )
+        .get_matches();
     let input = matches.value_of("input").unwrap().to_string();
     let input_path = Path::new(&input);
 
@@ -82,9 +94,9 @@ fn main() {
     let mut buf_reader = BufReader::new(&mut input_file);
     // The header is exactly one 2048-byte sector;
     // we'll also read 2048-byte increments as we go.
-    let mut data : Vec<u8> = vec![0; SECTOR_LENGTH];
+    let mut data: Vec<u8> = vec![0; SECTOR_LENGTH];
     match buf_reader.read_exact(&mut data) {
-        Ok(_) => {},
+        Ok(_) => {}
         Err(e) => {
             println!("Unable to read file {}: {}", input, e);
             exit(1);
@@ -101,7 +113,7 @@ fn main() {
         println!("Writing chunk {} to {}", i, output_name);
 
         match write_chunk(&mut buf_reader, &mut output_file, &chunk) {
-            Ok(_) => {},
+            Ok(_) => {}
             Err(e) => {
                 println!("Error when trying to write chunk {}: {}", output_name, e);
                 exit(1);

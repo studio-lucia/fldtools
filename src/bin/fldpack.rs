@@ -1,7 +1,7 @@
 use std::fs;
 use std::fs::File;
-use std::io::{BufReader, BufWriter};
 use std::io::prelude::*;
+use std::io::{BufReader, BufWriter};
 use std::path::Path;
 use std::process::exit;
 
@@ -9,9 +9,9 @@ extern crate fldtools;
 use fldtools::{ChunkList, SECTOR_LENGTH};
 
 extern crate clap;
-use clap::{Arg, App};
+use clap::{App, Arg};
 
-fn write_file(filename : &String, writer : &mut BufWriter<File>) -> ::std::io::Result<u64> {
+fn write_file(filename: &String, writer: &mut BufWriter<File>) -> ::std::io::Result<u64> {
     let file_length = fs::metadata(&filename)?.len();
     let padding_size = SECTOR_LENGTH - (file_length as usize % SECTOR_LENGTH);
 
@@ -40,23 +40,31 @@ fn write_file(filename : &String, writer : &mut BufWriter<File>) -> ::std::io::R
 
 fn main() {
     let matches = App::new("fldpack")
-                          .version("0.1.1")
-                          .author("Misty De Meo")
-                          .about("Pack Magical School Lunar! FLD files")
-                          .arg(Arg::with_name("target")
-                              .help("The packed filename")
-                              .required(true)
-                              .index(1))
-                          .arg(Arg::with_name("input")
-                              .help("File(s) to pack")
-                              .required(true)
-                              .multiple(true))
-                          .get_matches();
+        .version("0.1.1")
+        .author("Misty De Meo")
+        .about("Pack Magical School Lunar! FLD files")
+        .arg(
+            Arg::with_name("target")
+                .help("The packed filename")
+                .required(true)
+                .index(1),
+        )
+        .arg(
+            Arg::with_name("input")
+                .help("File(s) to pack")
+                .required(true)
+                .multiple(true),
+        )
+        .get_matches();
 
     let target = matches.value_of("target").unwrap().to_string();
     let target_path = Path::new(&target);
 
-    let input_files = matches.values_of("input").unwrap().map(|path| String::from(path)).collect::<Vec<String>>();
+    let input_files = matches
+        .values_of("input")
+        .unwrap()
+        .map(|path| String::from(path))
+        .collect::<Vec<String>>();
     if input_files.iter().any(|path| !Path::new(path).exists()) {
         println!("One or more input files are couldn't be found!");
         exit(1);
@@ -72,7 +80,10 @@ fn main() {
     }
     let mut writer = BufWriter::new(target_file);
 
-    let file_lengths = input_files.iter().map(|file| fs::metadata(file).unwrap().len() as usize).collect::<Vec<usize>>();
+    let file_lengths = input_files
+        .iter()
+        .map(|file| fs::metadata(file).unwrap().len() as usize)
+        .collect::<Vec<usize>>();
     let chunk_list = ChunkList::build(&file_lengths);
 
     // Start by writing out the header
@@ -81,9 +92,12 @@ fn main() {
     // Then iterate over each file
     for filename in input_files {
         match write_file(&filename, &mut writer) {
-            Ok(_) => {},
+            Ok(_) => {}
             Err(e) => {
-                println!("Encountered an error trying to write file {}: {}", filename, e);
+                println!(
+                    "Encountered an error trying to write file {}: {}",
+                    filename, e
+                );
                 println!("Leaving partial output file in place.");
                 exit(1);
             }
